@@ -74,8 +74,9 @@ PolicyList::~PolicyList()
 	PolicyCode& pc = *i;
 
 	_pmap.del_dependency(pc.first,_protocol);
-
-	delete (*i).second;
+	// XXX: _policies NULL problem
+	if ((*i).second != NULL)
+	    delete (*i).second;
     }
 
     for (POLICIES::iterator i = _pe_policies.begin();
@@ -236,7 +237,7 @@ PolicyList::str()
 	ret += "PolicyName: " + (*i).first + "\n";
 
 	ret += "Code:\n";
-
+	
 	CodeList* cl = (*i).second;
 	if(cl)
 	    ret += cl->str();
@@ -255,10 +256,11 @@ PolicyList::link_code(Code& ret)
 	 i != _policies.end(); ++i) {
 
 	CodeList* cl = (*i).second;
-
-	cl->refresh_sm_redistribution_tags(ret);
-	// because of target set in ret, only relevant code will be linked.
-	cl->link_code(ret);
+	if(cl != NULL) {
+	    cl->refresh_sm_redistribution_tags(ret);
+	    // because of target set in ret, only relevant code will be linked.
+	    cl->link_code(ret);
+	}
     }
 }
 
@@ -274,7 +276,9 @@ PolicyList::get_targets(Code::TargetSet& targets)
 
 	// get all the targets in this code list [a single policy may have more
 	// than one targets -- such as source match filters].
-	cl->get_targets(targets);
+	// XXX: _policies NULL problem
+	if (cl != NULL)
+	    cl->get_targets(targets);
     }
 }
 
@@ -288,7 +292,9 @@ PolicyList::get_redist_tags(const string& protocol, Code::TagSet& ts)
 
 	CodeList* cl = (*i).second;
 
-	cl->get_redist_tags(protocol,ts);
+	// XXX: _policies NULL problem
+	if (cl != NULL)
+	    cl->get_redist_tags(protocol,ts);
     }
 }
 
