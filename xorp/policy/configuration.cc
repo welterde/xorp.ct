@@ -221,10 +221,16 @@ Configuration::clear_protocol_tags(const TagSet& ts)
 
 	if (!skip) {
 	    map<string, set<uint32_t> >::iterator pt_iter;
+	    std::vector<string> nowempty;
 	    for (pt_iter = _protocol_tags.begin(); pt_iter != _protocol_tags.end(); pt_iter++) {
 		pt_iter->second.erase(*ts_iter);
 		if (pt_iter->second.empty())
-		    _protocol_tags.erase(pt_iter);
+		    nowempty.push_back(pt_iter->first);
+		    //_protocol_tags.erase(pt_iter);
+	    }
+	    while(!nowempty.empty()) {
+		_protocol_tags.erase(nowempty.back());
+		nowempty.pop_back();
 	    }
 	}
     }
