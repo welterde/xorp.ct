@@ -111,7 +111,8 @@ def generate(env, **kwargs):
     env.SetDefault( AUTOTEST_SKIP_ERRORS = False )
 
     #Here's where keyword arguments are applied
-    apply(env.Replace, (), kwargs)
+    #apply(env.Replace, (), kwargs)
+    env.Replace(**kwargs)
 
     def AutoTest(env, target, source = None, **kwargs):
         """Usage:

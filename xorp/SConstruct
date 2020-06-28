@@ -121,11 +121,10 @@ vars.AddVariables(
     )
 
 def log_args(afname):
-    f = open(afname, 'w')
-    for a in ARGUMENTS.iteritems():
-        print >>f, "%s=%s" % a,
-    print >>f
-    f.close()
+    with open(afname, 'w') as f:
+        for k,v in ARGUMENTS:
+            f.write('%s=%s\n' % (k,v))
+        f.write('\n')
 
 def tgt_guess():
     p = subprocess.Popen(['./config.guess'], stdout=subprocess.PIPE)
@@ -144,13 +143,13 @@ def tgt_canonicalize(alias):
 build_alias = ARGUMENTS.get('build', None)
 if build_alias == None:
     build_alias = tgt_guess()
-build = tgt_canonicalize(build_alias)
+build = tgt_canonicalize(build_alias).decode('utf-8')
 (build_cpu, build_vendor, build_os) = build.split('-', 2)
 
 host_alias = ARGUMENTS.get('host', None)
 if host_alias == None:
     host_alias = build_alias
-host = tgt_canonicalize(host_alias)
+host = tgt_canonicalize(host_alias).decode('utf-8')
 (host_cpu, host_vendor, host_os)  = host.split('-', 2)
 
 

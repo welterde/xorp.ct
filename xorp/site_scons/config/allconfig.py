@@ -41,35 +41,35 @@ def DoAllConfig(env, conf, host_os):
     # Bleh, FC8 era scons doesn't have this check.
     try:
         if not conf.CheckCC:
-            print "\nERROR:  Cannot find functional cc compiler."
-            print "  On Fedora/RedHat: yum install gcc"
+            print("\nERROR:  Cannot find functional cc compiler.")
+            print("  On Fedora/RedHat: yum install gcc")
             sys.exit(1);
-        print "OK:  c compiler appears functional.";
+        print("OK:  c compiler appears functional.")
 
         if not conf.CheckCXX:
-            print "\nERROR:  Cannot find functional c++ compiler."
-            print "  On Fedora/RedHat: yum install gcc-g++"
+            print("\nERROR:  Cannot find functional c++ compiler.")
+            print("  On Fedora/RedHat: yum install gcc-g++")
             sys.exit(1);
-        print "OK:  C++ compiler appears functional.";
+        print("OK:  C++ compiler appears functional.")
     except:
-        print "NOTE:  This version of scons cannot check for"
-        print "  existence of gcc and g++ compilers."
-        print "  Will assume the exist and function properly...\n"
+        print("NOTE:  This version of scons cannot check for")
+        print("  existence of gcc and g++ compilers.")
+        print("  Will assume the exist and function properly...\n")
 
     # Check for Flex and Bison
     if not (env.has_key('LEX') and env['LEX']):
-        print "\nERROR: Cannot find flex."
-        print "  On Ubuntu: sudo apt-get install flex"
-        print "  On Fedora/RedHat: yum install flex"
+        print("\nERROR: Cannot find flex.")
+        print("  On Ubuntu: sudo apt-get install flex")
+        print("  On Fedora/RedHat: yum install flex")
         sys.exit(1);
-    print "OK:  flex appears functional."
+    print("OK:  flex appears functional.")
 
     if not (env.has_key('YACC') and env['YACC']):
-        print "\nERROR: Cannot find bison."
-        print "  On Ubuntu: sudo apt-get install bison"
-        print "  On Fedora/RedHat: yum install bison"
+        print("\nERROR: Cannot find bison.")
+        print("  On Ubuntu: sudo apt-get install bison")
+        print("  On Fedora/RedHat: yum install bison")
         sys.exit(1);
-    print "OK:  bison appears functional."
+    print("OK:  bison appears functional.")
 
     # Mingw/windows stuff
     has_iphlpapi_h = conf.CheckHeader(['winsock2.h', 'iphlpapi.h'])
