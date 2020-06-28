@@ -41,35 +41,35 @@ def DoAllConfig(env, conf, host_os):
     # Bleh, FC8 era scons doesn't have this check.
     try:
         if not conf.CheckCC:
-            print "\nERROR:  Cannot find functional cc compiler."
-            print "  On Fedora/RedHat: yum install gcc"
+            print("\nERROR:  Cannot find functional cc compiler.")
+            print("  On Fedora/RedHat: yum install gcc")
             sys.exit(1);
-        print "OK:  c compiler appears functional.";
+        print("OK:  c compiler appears functional.")
 
         if not conf.CheckCXX:
-            print "\nERROR:  Cannot find functional c++ compiler."
-            print "  On Fedora/RedHat: yum install gcc-g++"
+            print("\nERROR:  Cannot find functional c++ compiler.")
+            print("  On Fedora/RedHat: yum install gcc-g++")
             sys.exit(1);
-        print "OK:  C++ compiler appears functional.";
+        print("OK:  C++ compiler appears functional.")
     except:
-        print "NOTE:  This version of scons cannot check for"
-        print "  existence of gcc and g++ compilers."
-        print "  Will assume the exist and function properly...\n"
+        print("NOTE:  This version of scons cannot check for")
+        print("  existence of gcc and g++ compilers.")
+        print("  Will assume the exist and function properly...\n")
 
     # Check for Flex and Bison
     if not (env.has_key('LEX') and env['LEX']):
-        print "\nERROR: Cannot find flex."
-        print "  On Ubuntu: sudo apt-get install flex"
-        print "  On Fedora/RedHat: yum install flex"
+        print("\nERROR: Cannot find flex.")
+        print("  On Ubuntu: sudo apt-get install flex")
+        print("  On Fedora/RedHat: yum install flex")
         sys.exit(1);
-    print "OK:  flex appears functional."
+    print("OK:  flex appears functional.")
 
     if not (env.has_key('YACC') and env['YACC']):
-        print "\nERROR: Cannot find bison."
-        print "  On Ubuntu: sudo apt-get install bison"
-        print "  On Fedora/RedHat: yum install bison"
+        print("\nERROR: Cannot find bison.")
+        print("  On Ubuntu: sudo apt-get install bison")
+        print("  On Fedora/RedHat: yum install bison")
         sys.exit(1);
-    print "OK:  bison appears functional."
+    print("OK:  bison appears functional.")
 
     # Mingw/windows stuff
     has_iphlpapi_h = conf.CheckHeader(['winsock2.h', 'iphlpapi.h'])
@@ -84,11 +84,11 @@ def DoAllConfig(env, conf, host_os):
                   'int32_t', 'uint32_t',
                   'int64_t', 'uint64_t'  ]:
         includes = ""
-	if has_inttypes_h:
-	    includes += '#include <inttypes.h>\n'
-	if has_stdint_h:
-	    includes += '#include <stdint.h>\n'
-	conf.CheckType(type, includes)
+        if has_inttypes_h:
+            includes += '#include <inttypes.h>\n'
+        if has_stdint_h:
+            includes += '#include <stdint.h>\n'
+        conf.CheckType(type, includes)
     
     has_stdbool_h = conf.CheckHeader('stdbool.h')
 
@@ -126,7 +126,7 @@ def DoAllConfig(env, conf, host_os):
 
     prereq_regex_h = []
     if has_sys_types_h:
-    	prereq_regex_h.append('sys/types.h')
+        prereq_regex_h.append('sys/types.h')
     has_regex_h = conf.CheckHeader(prereq_regex_h + ['regex.h'])
 
     has_syslog_h = conf.CheckHeader('syslog.h')
@@ -155,7 +155,7 @@ def DoAllConfig(env, conf, host_os):
         conf.Define('HAVE_CLOCK_MONOTONIC') # autoconf compat
     # BSD extension
     has_clock_monotonic_fast = conf.CheckDeclaration(
-	'CLOCK_MONOTONIC_FAST', '#include <time.h>')
+        'CLOCK_MONOTONIC_FAST', '#include <time.h>')
     if has_clock_monotonic_fast:
         conf.Define('HAVE_CLOCK_MONOTONIC_FAST')
     
@@ -232,7 +232,7 @@ def DoAllConfig(env, conf, host_os):
     af_inet_includes = []
     for s in prereq_af_inet_includes:
         af_inet_includes.append("#include <%s>\n" % s)
-    af_inet_includes = string.join(af_inet_includes, '')
+    af_inet_includes = ''.join(af_inet_includes)
     
     has_af_inet = conf.CheckDeclaration('AF_INET', af_inet_includes)
     has_af_inet6 = conf.CheckDeclaration('AF_INET6', af_inet_includes)
@@ -248,7 +248,7 @@ def DoAllConfig(env, conf, host_os):
         # TODO:  This used to check for openbsd and linux in an error prone
         #        way.  Now, do negative checks, but this could break Solaris and other OS
         #        (or not..no idea if it supports raw or not).
-	if not ((env.has_key('mingw') and env['mingw']) or
+        if not ((env.has_key('mingw') and env['mingw']) or
                 fnmatch.fnmatch(host_os, 'freebsd*')):
             conf.Define('IPV4_RAW_OUTPUT_IS_RAW')
             conf.Define('IPV4_RAW_INPUT_IS_RAW')
@@ -284,11 +284,11 @@ def DoAllConfig(env, conf, host_os):
     # and/or <linux/types.h>
     prereq_linux_ethtool_h = []
     if has_inttypes_h:
-	prereq_linux_ethtool_h.append('inttypes.h')
+        prereq_linux_ethtool_h.append('inttypes.h')
     if has_stdint_h:
-	prereq_linux_ethtool_h.append('stdint.h')
+        prereq_linux_ethtool_h.append('stdint.h')
     if has_linux_types_h:
-	prereq_linux_ethtool_h.append('linux/types.h')
+        prereq_linux_ethtool_h.append('linux/types.h')
     has_linux_ethtool_h = conf.CheckHeader(prereq_linux_ethtool_h + ['linux/ethtool.h'])
 
     has_linux_if_tun_h = conf.CheckHeader('linux/if_tun.h')
@@ -326,7 +326,7 @@ def DoAllConfig(env, conf, host_os):
             rta_nl_includes.append("#include <%s>\n" % s)
             
         rta_nl_includes.append("#include <linux/rtnetlink.h>\n");
-        rta_nl_includes = string.join(rta_nl_includes, '')
+        rta_nl_includes = ''.join(rta_nl_includes)
         has_netlink_rta_table = conf.CheckDeclaration('RTA_TABLE', rta_nl_includes)
         if has_netlink_rta_table:
             conf.Define('HAVE_NETLINK_SOCKET_ATTRIBUTE_RTA_TABLE')
@@ -355,15 +355,15 @@ def DoAllConfig(env, conf, host_os):
     # XXX header conditionals for linux/bsd variants needed.
     prereq_ether_includes = [ 'sys/types.h', 'sys/socket.h' ]
     if has_net_ethernet_h:
-	prereq_ether_includes.append('net/ethernet.h')
+        prereq_ether_includes.append('net/ethernet.h')
     if has_net_if_h:
-	prereq_ether_includes.append('net/if.h')
+        prereq_ether_includes.append('net/if.h')
     if has_net_if_ether_h:
-	prereq_ether_includes.append('net/if_ether.h')
+        prereq_ether_includes.append('net/if_ether.h')
     ether_includes = []
     for s in prereq_ether_includes:
         ether_includes.append("#include <%s>\n" % s)
-    ether_includes = string.join(ether_includes, '')
+    ether_includes = ''.join(ether_includes)
     has_struct_ether_addr = conf.CheckType('struct ether_addr', includes=ether_includes)
     
     # net stack: sysctl (bsd)
@@ -385,7 +385,7 @@ def DoAllConfig(env, conf, host_os):
     si = []
     for s in siocgifconf_includes:
         si.append("#include <%s>\n" % s)
-    si = string.join(si, '')
+    si = ''.join(si)
     has_siocgifconf = conf.CheckDeclaration('SIOCGIFCONF', si)
     if has_siocgifconf:
         conf.Define('HAVE_IOCTL_SIOCGIFCONF') # autoconf compat
@@ -411,11 +411,11 @@ def DoAllConfig(env, conf, host_os):
     # and/or <netinet/in_systm.h>
     prereq_netinet_ip_h = []
     if has_sys_types_h:
-	prereq_netinet_ip_h.append('sys/types.h')
+        prereq_netinet_ip_h.append('sys/types.h')
     if has_netinet_in_h:
         prereq_netinet_ip_h.append('netinet/in.h')
     if has_netinet_in_systm_h:
-	prereq_netinet_ip_h.append('netinet/in_systm.h')
+        prereq_netinet_ip_h.append('netinet/in_systm.h')
     prereq_mreqn_h = prereq_netinet_ip_h
     has_netinet_ip_h = conf.CheckHeader(prereq_netinet_ip_h + ['netinet/ip.h'])
     if has_netinet_ip_h:
@@ -429,24 +429,24 @@ def DoAllConfig(env, conf, host_os):
     mreqn_header_includes = []
     for s in prereq_mreqn_h:
         mreqn_header_includes.append("#include <%s>\n" % s)
-    mreqn_header_includes = string.join(mreqn_header_includes, '')
+    mreqn_header_includes = ''.join(mreqn_header_includes)
     has_struct_ip_mreqn = conf.CheckType('struct ip_mreqn', includes=mreqn_header_includes)
     if not has_struct_ip_mreqn:
-        print "\nWARNING: No struct ip_mreqn found.  Each interface must"
-        print "  have a unique IP address or IP multicast (at least) will not"
-        print "  be transmitted on the correct interface."
+        print("\nWARNING: No struct ip_mreqn found.  Each interface must")
+        print("  have a unique IP address or IP multicast (at least) will not")
+        print("  be transmitted on the correct interface.")
 
     # Header file <netinet/if_ether.h> might need <sys/types.h>, 
     # <sys/socket.h>, <net/if.h>, and/or <netinet/in.h>
     prereq_netinet_if_ether_h = []
     if has_sys_types_h: 
-	prereq_netinet_if_ether_h.append('sys/types.h')
+        prereq_netinet_if_ether_h.append('sys/types.h')
     if has_sys_socket_h: 
-	prereq_netinet_if_ether_h.append('sys/socket.h')
+        prereq_netinet_if_ether_h.append('sys/socket.h')
     if has_net_if_h: 
-	prereq_netinet_if_ether_h.append('net/if.h')
+        prereq_netinet_if_ether_h.append('net/if.h')
     if has_netinet_in_h:
-	prereq_netinet_if_ether_h.append('netinet/in.h')
+        prereq_netinet_if_ether_h.append('netinet/in.h')
     has_netinet_if_ether_h = conf.CheckHeader(prereq_netinet_if_ether_h + ['netinet/if_ether.h'])
 
     # opensolaris
@@ -467,7 +467,7 @@ def DoAllConfig(env, conf, host_os):
     v4mcast_includes = []
     for s in prereq_v4mcast:
         v4mcast_includes.append("#include <%s>\n" % s)
-    v4mcast_includes = string.join(v4mcast_includes, '')
+    v4mcast_includes = ''.join(v4mcast_includes)
     # check for each symbol
     gotv4sym = True
     for s in v4mcast_symbols:
@@ -477,10 +477,10 @@ def DoAllConfig(env, conf, host_os):
     if has_v4_mcast:
         conf.Define('HAVE_IPV4_MULTICAST')
         if host_os == 'linux-gnu' or host_os == 'linux-gnueabi':
-            print "Enabling MULT_MCAST_TABLES logic since we are compiling for Linux.\n"
+            print("Enabling MULT_MCAST_TABLES logic since we are compiling for Linux.\n")
             conf.Define('USE_MULT_MCAST_TABLES')
         else:
-            print "Disabling MULT_MCAST_TABLES, host_os:", host_os, "\n"
+            print("Disabling MULT_MCAST_TABLES, host_os:", host_os, "\n")
 
     # v4 stack: sysctl (bsd)
     conf.CheckSysctl('IPCTL_FORWARDING', oid='CTL_NET, AF_INET, IPPROTO_IP, IPCTL_FORWARDING', includes='#include <sys/socket.h>\n#include <netinet/in.h>')
@@ -514,11 +514,11 @@ def DoAllConfig(env, conf, host_os):
     prereq_rfc3542 = ['stdlib.h', 'sys/types.h', 'netinet/in.h']
     rfc3542_includes = []
     for s in prereq_rfc3542:
-	# XXX: __USE_GNU must be defined for RFC3542 defines under Linux.
-	if host_os == 'linux-gnu' and s == 'netinet/in.h':
-	    rfc3542_includes.append("#define __USE_GNU\n")
+        # XXX: __USE_GNU must be defined for RFC3542 defines under Linux.
+        if host_os == 'linux-gnu' and s == 'netinet/in.h':
+            rfc3542_includes.append("#define __USE_GNU\n")
         rfc3542_includes.append("#include <%s>\n" % s)
-    rfc3542_includes = string.join(rfc3542_includes, '')
+    rfc3542_includes = ''.join(rfc3542_includes)
 
     has___kame__ = conf.CheckDeclaration('__KAME__', rfc3542_includes)
     # CheckFunc() too tight.
@@ -542,7 +542,7 @@ def DoAllConfig(env, conf, host_os):
     mld_hdr_includes = []
     for s in prereq_netinet_icmp6_h + [ netinet_icmp6_h ]:
         mld_hdr_includes.append("#include <%s>\n" % s)
-    mld_hdr_includes = string.join(mld_hdr_includes, '')
+    mld_hdr_includes = ''.join(mld_hdr_includes)
     has_struct_mld_hdr = conf.CheckType('struct mld_hdr', includes=mld_hdr_includes)
     
     # Header file <netinet6/in6_var.h> might need <sys/types.h>, <sys/socket.h>,
@@ -564,17 +564,17 @@ def DoAllConfig(env, conf, host_os):
     # <net/if.h>, <net/if_var.h>, <netinet/in.h>, and/or <netinet6/in6_var.h> 
     prereq_netinet6_nd6_h = []
     if has_sys_types_h:
-	prereq_netinet6_nd6_h.append('sys/types.h')
+        prereq_netinet6_nd6_h.append('sys/types.h')
     if has_sys_socket_h:
-	prereq_netinet6_nd6_h.append('sys/socket.h')
+        prereq_netinet6_nd6_h.append('sys/socket.h')
     if has_net_if_h:
-	prereq_netinet6_nd6_h.append('net/if.h')
+        prereq_netinet6_nd6_h.append('net/if.h')
     if has_net_if_var_h:
-	prereq_netinet6_nd6_h.append('net/if_var.h')
+        prereq_netinet6_nd6_h.append('net/if_var.h')
     if has_netinet_in_h:
-	prereq_netinet6_nd6_h.append('netinet/in.h')
+        prereq_netinet6_nd6_h.append('netinet/in.h')
     if has_netinet6_in6_var_h:
-	prereq_netinet6_nd6_h.append('netinet6/in6_var.h')
+        prereq_netinet6_nd6_h.append('netinet6/in6_var.h')
     netinet6_nd6_h = 'netinet6/nd6.h'
     has_netinet6_nd6_h = conf.CheckHeader(prereq_netinet6_nd6_h + [ netinet6_nd6_h ])
     has_cxx_netinet6_nd6_h = conf.CheckHeader(prereq_netinet6_nd6_h + [ netinet6_nd6_h ], language='C++')
@@ -593,7 +593,7 @@ def DoAllConfig(env, conf, host_os):
     v6mcast_includes = []
     for s in prereq_v6mcast:
         v6mcast_includes.append("#include <%s>\n" % s)
-    v6mcast_includes = string.join(v6mcast_includes, '')
+    v6mcast_includes = ''.join(v6mcast_includes)
     # check for each symbol
     gotv6sym = True
     for s in v6mcast_symbols:
@@ -609,16 +609,16 @@ def DoAllConfig(env, conf, host_os):
     fpclassify_includes = []
     for s in prereq_fpclassify:
         fpclassify_includes.append("#include <%s>\n" % s)
-    fpclassify_includes = string.join(fpclassify_includes, '')
+    fpclassify_includes = ''.join(fpclassify_includes)
     has_fpclassify = conf.CheckDeclaration('fpclassify', fpclassify_includes)
     if not has_fpclassify:
         env.AppendUnique(CFLAGS = '-std=gnu99')
         has_fpclassify = conf.CheckDeclaration('fpclassify', fpclassify_includes)
         if not has_fpclassify:
-            print "\nERROR:  Cannot find fpclassify, tried -std=gnu99 as well."
+            print("\nERROR:  Cannot find fpclassify, tried -std=gnu99 as well.")
             sys.exit(1)
         else:
-            print "\nNOTE:  Using -std=gnu99 for fpclassify (math.h)\n"
+            print("\nNOTE:  Using -std=gnu99 for fpclassify (math.h)\n")
 
     ##########
     # v4 mforwarding
@@ -660,13 +660,13 @@ def DoAllConfig(env, conf, host_os):
     # you can't pass arbitrary code that is prepended to the test.
     prereq_linux_mroute_h = []
     if has_sys_types_h:
-	prereq_linux_mroute_h.append('sys/types.h')
+        prereq_linux_mroute_h.append('sys/types.h')
     if has_sys_socket_h:
-	prereq_linux_mroute_h.append('sys/socket.h')
+        prereq_linux_mroute_h.append('sys/socket.h')
     if has_netinet_in_h:
-	prereq_linux_mroute_h.append('netinet/in.h')
+        prereq_linux_mroute_h.append('netinet/in.h')
     if has_linux_types_h:
-	prereq_linux_mroute_h.append('linux/types.h')
+        prereq_linux_mroute_h.append('linux/types.h')
     linux_mroute_h = 'linux/mroute.h'
     has_linux_mroute_h = conf.CheckHeader(prereq_linux_mroute_h + [ linux_mroute_h ])
     if has_linux_mroute_h:
@@ -691,7 +691,7 @@ def DoAllConfig(env, conf, host_os):
     mfcctl2_includes = []
     for s in prereq_mroute_h + [ mroute_h ]:
         mfcctl2_includes.append("#include <%s>\n" % s)
-    mfcctl2_includes = string.join(mfcctl2_includes, '')
+    mfcctl2_includes = ''.join(mfcctl2_includes)
     
     # common structs
     has_struct_mfcctl2 = conf.CheckType('struct mfcctl2', includes=mfcctl2_includes)
@@ -736,14 +736,14 @@ def DoAllConfig(env, conf, host_os):
     for s in prereq_linux_mroute6_h:
         i6o_includes.append("#include <%s>\n" % s)
     i6o_includes.append("#include <%s>\n" % linux_mroute6_h);
-    i6o_includes = string.join(i6o_includes, '')
+    i6o_includes = ''.join(i6o_includes)
     has_inet6_option_space = conf.CheckDeclaration('inet6_option_space', i6o_includes);
     
     # common structs
     mf6cctl2_includes = []
     for s in prereq_mroute6_h + [ mroute6_h ]:
         mf6cctl2_includes.append("#include <%s>\n" % s)
-    mf6cctl2_includes = string.join(mf6cctl2_includes, '')
+    mf6cctl2_includes = ''.join(mf6cctl2_includes)
     
     has_struct_mf6cctl2 = conf.CheckType('struct mf6cctl2', includes=mf6cctl2_includes)
     has_struct_mfcctl2_mfcc_flags = conf.CheckTypeMember('struct mf6cctl2', 'mf6cc_flags', includes=mf6cctl2_includes)
@@ -758,8 +758,8 @@ def DoAllConfig(env, conf, host_os):
                 conf.Define('HAVE_IPV6_OPTION_SPACE')
             else:
                 if not has_inet6_opt_init:
-                    print "\nWARNING:  inet6_option_* and inet6_opt_* are not supported on this system."
-                    print "  this might cause some problems with IPv6 multicast routing.\n"
+                    print("\nWARNING:  inet6_option_* and inet6_opt_* are not supported on this system.")
+                    print("  this might cause some problems with IPv6 multicast routing.\n")
 
     has_struct_mif6ctl_vifc_threshold = conf.CheckTypeMember('struct mif6ctl', 'vifc_threshold', includes=mf6cctl2_includes) 
     ##########
@@ -792,19 +792,19 @@ def DoAllConfig(env, conf, host_os):
     # <net/vlan/if_vlan_var.h> might need a list of other files.
     prereq_vlan = []
     if has_sys_types_h:
-	prereq_vlan.append('sys/types.h')
+        prereq_vlan.append('sys/types.h')
     if has_sys_socket_h:
-	prereq_vlan.append('sys/socket.h')
+        prereq_vlan.append('sys/socket.h')
     if has_net_if_h:
-	prereq_vlan.append('net/if.h')
+        prereq_vlan.append('net/if.h')
     if has_net_ethernet_h:
-	prereq_vlan.append('net/ethernet.h')
+        prereq_vlan.append('net/ethernet.h')
     if has_net_if_ether_h:
-	prereq_vlan.append('net/if_ether.h')
+        prereq_vlan.append('net/if_ether.h')
     if has_netinet_in_h:
-	prereq_vlan.append('netinet/in.h')
+        prereq_vlan.append('netinet/in.h')
     if has_netinet_if_ether_h:
-	prereq_vlan.append('netinet/if_ether.h')
+        prereq_vlan.append('netinet/if_ether.h')
 
     has_net_if_vlanvar_h = conf.CheckHeader(prereq_vlan + ['net/if_vlanvar.h'])
 
@@ -822,7 +822,7 @@ def DoAllConfig(env, conf, host_os):
         if not conf.CheckDeclaration('GET_VLAN_VID_CMD', '#include <linux/if_vlan.h>'):
             conf.Define('GET_VLAN_VID_CMD', '9')
     else:
-	if has_net_if_vlanvar_h or has_net_if_vlan_var_h:
+        if has_net_if_vlanvar_h or has_net_if_vlan_var_h:
             conf.Define('HAVE_VLAN_BSD')
 
     
@@ -839,20 +839,20 @@ def DoAllConfig(env, conf, host_os):
     # XXX Check for MD5_Init()
     prereq_md5 = []
     if has_sys_types_h:
-	prereq_md5.append('sys/types.h')
+        prereq_md5.append('sys/types.h')
     has_openssl_md5_h = conf.CheckHeader(prereq_md5 + ['openssl/md5.h'])
     if not has_openssl_md5_h:
-        print "\nERROR:  Cannot find required openssl/md5.h."
-        print "  On Fedora/RedHat:  yum install openssl-devel"
-        print "  On Ubuntu:  apt-get install libssl-dev"
-        print "  After install, rm -fr xorp/obj build directory to"
-        print "  clear the configure cache before re-building."
+        print("\nERROR:  Cannot find required openssl/md5.h.")
+        print("  On Fedora/RedHat:  yum install openssl-devel")
+        print("  On Ubuntu:  apt-get install libssl-dev")
+        print("  After install, rm -fr xorp/obj build directory to")
+        print("  clear the configure cache before re-building.")
         sys.exit(1)
         
     has_libcrypto = conf.CheckLib('crypto')
     if not has_libcrypto:
-        print "\nERROR:  Cannot find required crypto library."
-        print "  clear the configure cache before re-building."
+        print("\nERROR:  Cannot find required crypto library.")
+        print("  clear the configure cache before re-building.")
         sys.exit(1)
         
     has_md5_init = conf.CheckFunc('MD5_Init')
@@ -872,48 +872,48 @@ def DoAllConfig(env, conf, host_os):
     env['has_libpcap'] = has_libpcap
     has_pcap_sendpacket = conf.CheckFunc('pcap_sendpacket')
     if not has_libpcap:
-        print "\nWARNING:  Libpcap was not detected.\n  VRRP and other protocols may have issues."
-        print "  On Fedora/RedHat:  yum install libpcap-devel"
-        print "  On Ubuntu:  apt-get install libpcap-dev"
-        print "  After install, rm -fr xorp/obj build directory to"
-        print "  clear the configure cache before re-building.\n"
+        print("\nWARNING:  Libpcap was not detected.\n  VRRP and other protocols may have issues.")
+        print("  On Fedora/RedHat:  yum install libpcap-devel")
+        print("  On Ubuntu:  apt-get install libpcap-dev")
+        print("  After install, rm -fr xorp/obj build directory to")
+        print("  clear the configure cache before re-building.\n")
 
     # pcap filtering can be used to cut down on un-needed netlink packets.
     #  This is a performance gain only, can function fine without it.
     prereq_pcap_bpf = []
     if has_sys_types_h:
-	prereq_pcap_bpf.append('sys/types.h')
+        prereq_pcap_bpf.append('sys/types.h')
     has_pcap_bpf_h = conf.CheckHeader(prereq_pcap_bpf + ['pcap-bpf.h'])
     if not has_pcap_bpf_h:
-        print "\nWARNING: PCAP-BPF is not supported on this system,"
-        print "  socket filtering will not work."
-        print "  This is not a real problem, just a small performance"
-        print "  loss when using multiple virtual routers on the same system."
-        print "  On Debian:  apt-get install libpcap-dev"
-        print "  On Older Ubuntu:  apt-get install pcap-dev\n"
-        print "  On Newer Ubuntu:  apt-get install libpcap-dev\n"
+        print("\nWARNING: PCAP-BPF is not supported on this system,")
+        print("  socket filtering will not work.")
+        print("  This is not a real problem, just a small performance")
+        print("  loss when using multiple virtual routers on the same system.")
+        print("  On Debian:  apt-get install libpcap-dev")
+        print("  On Older Ubuntu:  apt-get install pcap-dev\n")
+        print("  On Newer Ubuntu:  apt-get install libpcap-dev\n")
 
     if not (has_linux_netfilter_ipv4_ip_tables_h or has_linux_netfilter_ipv6_ip6_tables_h):
         if not (env.has_key('disable_fw') and env['disable_fw']):
             if has_linux_mroute_h:
                 # We are Linux...should warn users about how to make netfiltering work since
                 # it appears their headers are busted.
-                print "\nWARNING: Netfilter include files are broken or do not exist."
-                print "  This means the Linux firewall support will not be compiled in."
-                print "  To fix, you may edit: /usr/include/linux/netfilter_ipv4/ip_tables.h"
-                print "  line 222 or so, to look like this:"
-                print "  /* Helper functions */"
-                print "  static __inline__ struct ipt_entry_target *"
-                print "  ipt_get_target(struct ipt_entry *e)"
-                print "{"
-                print "        /* BEN:  Was void* */"
-                print "        return (struct ipt_entry_target *)((char*)e + e->target_offset);"
-                print "}"
-                print "\nYou will also want to edit similar code around line 282 of:"
-                print "/usr/include/linux/netfilter_ipv6/ip6_tables.h"
-                print "NOTE:  Recent kernels use struct xt_entry_target for the argument"
-                print "   for these methods, so use that instead of ipt_entry_target if that"
-                print "   is the case for your system."
+                print("\nWARNING: Netfilter include files are broken or do not exist.")
+                print("  This means the Linux firewall support will not be compiled in.")
+                print("  To fix, you may edit: /usr/include/linux/netfilter_ipv4/ip_tables.h")
+                print("  line 222 or so, to look like this:")
+                print("  /* Helper functions */")
+                print("  static __inline__ struct ipt_entry_target *")
+                print("  ipt_get_target(struct ipt_entry *e)")
+                print("{")
+                print("        /* BEN:  Was void* */")
+                print("        return (struct ipt_entry_target *)((char*)e + e->target_offset);")
+                print("}")
+                print("\nYou will also want to edit similar code around line 282 of:")
+                print("/usr/include/linux/netfilter_ipv6/ip6_tables.h")
+                print("NOTE:  Recent kernels use struct xt_entry_target for the argument")
+                print("   for these methods, so use that instead of ipt_entry_target if that")
+                print("   is the case for your system.")
 
     ##########
     # curses for cli/libtecla
@@ -924,9 +924,9 @@ def DoAllConfig(env, conf, host_os):
     env['has_libpdcurses'] = has_libpdcurses
     env['has_libncurses'] = has_libncurses
     if not has_libcurses and not has_libncurses and not has_libpdcurses:
-        print "\nERROR:  Cannot find required (n)curses or pdcurses library."
-        print "  On Fedora/RedHat:  yum install ncurses-devel"
-        print "  On Debian/Ubuntu:  apt-get install ncurses-dev"
-        print "  After install, rm -fr xorp/obj build directory to"
-        print "  clear the configure cache before re-building."
+        print("\nERROR:  Cannot find required (n)curses or pdcurses library.")
+        print("  On Fedora/RedHat:  yum install ncurses-devel")
+        print("  On Debian/Ubuntu:  apt-get install ncurses-dev")
+        print("  After install, rm -fr xorp/obj build directory to")
+        print("  clear the configure cache before re-building.")
         sys.exit(1)

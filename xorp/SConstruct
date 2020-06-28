@@ -56,8 +56,8 @@ try:
     # be relaxed.
     EnsureSConsVersion(0, 98, 4)
 except SystemExit:
-    print "WARNING:  Actually, SCONS version 0.98.4 or later is _preferred_."
-    print "Attempting to continue with version: " + SCons.__version__ + " but it may not work properly.\n"
+    print("WARNING:  Actually, SCONS version 0.98.4 or later is _preferred_.")
+    print("Attempting to continue with version: " + SCons.__version__ + " but it may not work properly.\n")
 
 
 vars = Variables()
@@ -121,11 +121,10 @@ vars.AddVariables(
     )
 
 def log_args(afname):
-    f = open(afname, 'w')
-    for a in ARGUMENTS.iteritems():
-        print >>f, "%s=%s" % a,
-    print >>f
-    f.close()
+    with open(afname, 'w') as f:
+        for k,v in ARGUMENTS.items():
+            f.write('%s=%s\n' % (k,v))
+        f.write('\n')
 
 def tgt_guess():
     p = subprocess.Popen(['./config.guess'], stdout=subprocess.PIPE)
@@ -144,13 +143,13 @@ def tgt_canonicalize(alias):
 build_alias = ARGUMENTS.get('build', None)
 if build_alias == None:
     build_alias = tgt_guess()
-build = tgt_canonicalize(build_alias)
+build = tgt_canonicalize(build_alias).decode('utf-8')
 (build_cpu, build_vendor, build_os) = build.split('-', 2)
 
 host_alias = ARGUMENTS.get('host', None)
 if host_alias == None:
     host_alias = build_alias
-host = tgt_canonicalize(host_alias)
+host = tgt_canonicalize(host_alias).decode('utf-8')
 (host_cpu, host_vendor, host_os)  = host.split('-', 2)
 
 
@@ -171,63 +170,63 @@ if (len(COMMAND_LINE_TARGETS) == 0):
 # XXX TODO: Make initial CPPPATH/LIBPATH derive from
 # autodetected host system *or* command line.
 #env = Environment(
-#		  TOOLS = ['default', 'autotest', 'clntgen', 'tgtgen',
-#		           'TOOL_SUBST'],
-#		  ENV = os.environ,
-#		  BUILDDIR = builddir,
-#		  CPPPATH=['/usr/local/include', '$BUILDDIR'],
-#		  LIBPATH=['usr/lib', '/usr/local/lib'],
-#		  variables = vars)
+#                 TOOLS = ['default', 'autotest', 'clntgen', 'tgtgen',
+#                          'TOOL_SUBST'],
+#                 ENV = os.environ,
+#                 BUILDDIR = builddir,
+#                 CPPPATH=['/usr/local/include', '$BUILDDIR'],
+#                 LIBPATH=['usr/lib', '/usr/local/lib'],
+#                 variables = vars)
 
 env = Environment(
-		  TOOLS = ['default', 'autotest', 'clntgen', 'tgtgen',
-		           'TOOL_SUBST'],
-		  ENV = os.environ,
-		  BUILDDIR = builddir,
-		  CPPPATH=['$BUILDDIR'],
-		  LIBPATH=['usr/lib'],
-		  variables = vars)
+                  TOOLS = ['default', 'autotest', 'clntgen', 'tgtgen',
+                           'TOOL_SUBST'],
+                  ENV = os.environ,
+                  BUILDDIR = builddir,
+                  CPPPATH=['$BUILDDIR'],
+                  LIBPATH=['usr/lib'],
+                  variables = vars)
 
 prefix = env['prefix']
 
 env['builddir'] = builddir;
 
-print 'Build System Type: ', build
-print 'Host System Type:  ', host
-print 'Source path:       ', sourcedir
-print 'Build path:        ', builddir
-print 'Install prefix:    ', prefix
+print('Build System Type: ', build)
+print('Host System Type:  ', host)
+print('Source path:       ', sourcedir)
+print('Build path:        ', builddir)
+print('Install prefix:    ', prefix)
 
 env['DESTDIR'] = ARGUMENTS.get('DESTDIR', '')
 
 # Provide mechanism to override CC, CXX, etc.
 if ARGUMENTS.get('CC', None):
     env['CC'] = ARGUMENTS.get('CC')
-print 'CC:               ', env['CC']
+print('CC:               ', env['CC'])
 
 if ARGUMENTS.get('CXX', None):
     env['CXX'] = ARGUMENTS.get('CXX')
-print 'CXX:              ', env['CXX']
+print('CXX:              ', env['CXX'])
 
 if ARGUMENTS.get('RANLIB', None):
     env['RANLIB'] = ARGUMENTS.get('RANLIB')
-print 'RANLIB:           ', env['RANLIB']
+print('RANLIB:           ', env['RANLIB'])
 
 if ARGUMENTS.get('AR', None):
     env['AR'] = ARGUMENTS.get('AR')
-    print 'AR:               ', env['AR']
+    print('AR:               ', env['AR'])
 
 if ARGUMENTS.get('LD', None):
     env['LD'] = ARGUMENTS.get('LD')
-    print 'LD:               ', env['LD']
+    print('LD:               ', env['LD'])
 
 
 env['STRIP'] = ARGUMENTS.get('STRIP', 'strip')
-print 'STRIP:            ', env['STRIP']
+print('STRIP:            ', env['STRIP'])
 
 if env['strip']:
     env['strip'] = True
-print 'Strip binaries:   ', env.has_key('strip')
+print('Strip binaries:   ', env.has_key('strip'))
 
 # POSIX strip has no options by the strict letter of the law.
 # Assume we have GNU binutils strip until proven otherwise.
@@ -238,70 +237,70 @@ if gnustrip:
 
 # User can override this. Defaults to gcc's -O1, as this trims
 # most of the template fat.
-print 'Optimize code:    ', env['optimize']
+print('Optimize code:    ', env['optimize'])
 
 # Default to disable; wrapper for compiler profiling support.
-print 'Profile code:     ', env['profile']
+print('Profile code:     ', env['profile'])
 
 # Default to local (UNIX domain sockets).
-print 'Default XRL transport:', env['transport']
+print('Default XRL transport:', env['transport'])
 
 # Most of our shared library tweaks are specific to GNU ld.
 # Check if the GNU linker is available, and print a warning if not.
 if env['shared']:
     if SCons.Tool.FindTool(['gnulink'], env) is None:
-        print gnutoolwarning % 'ld linker'
+        print(gnutoolwarning % 'ld linker')
     env['SHAREDLIBS'] = "defined"
-print 'Shared libraries: ', env.has_key('SHAREDLIBS')
-print 'Use rtld ORIGIN:  ', env['rtld_origin']
+print('Shared libraries: ', env.has_key('SHAREDLIBS'))
+print('Use rtld ORIGIN:  ', env['rtld_origin'])
 
 # AUTOTEST_SKIP_ERRORS is SetDefault() by site_scons/site_tools/autotest.py,
 # so print its value here.
 if env['ignore_check_errors']:
     env['AUTOTEST_SKIP_ERRORS'] = True
-print 'Ignore check errors: ', env['AUTOTEST_SKIP_ERRORS']
+print('Ignore check errors: ', env['AUTOTEST_SKIP_ERRORS'])
 
 # NOTE: Enabling debug messages for the whole tree may not be what you want,
 # as it can lead to premature timeouts.
 # Enabling callback debugging is currently not advised as it does
 # inline printfs.
-print 'Debug symbols:    ', env['debug']
-print 'Debug STL:        ', env['debug_stl']
-print 'Debug messages:   ', env['debug_msg']
-print 'Debug function names: ', env['debug_fn']
-print 'Debug callbacks:  ', env['debug_cb']
-print 'Debug XRL syntax: ', env['debug_xrldb']
-print 'Enable OLSR:      ', env['enable_olsr']
-print 'Enable Wrapper:   ', env['enable_wrapper']
-print 'Enable OSPF:      ', env['enable_ospf']
-print 'Enable RIP:       ', env['enable_rip']
-print 'Enable VRRP:      ', env['enable_vrrp']
-print 'Enable xorpsh     ', env['enable_xorpsh']
-print 'Enable Test Programs: ', env['enable_tests']
-print 'Enable CLICK:     ', env['enable_click']
-print 'Enable FEA Dummy: ', env['enable_fea_dummy']
-print 'Enable VIFF_USE_IFINDEX: ', env['enable_viff_use_ifindex']
-print 'Enable async method impls: ', env['enable_async_server']
-print 'Enable BGP:       ', env['enable_bgp']
-print 'Enable BuildInfo: ', env['enable_buildinfo']
-print 'Xorp can run from BUILD_DIR: ', env['enable_builddirrun']
-print 'Try Enable BOOST: ', env['enable_boost']
-print 'Try Enable uSTL : ', env['enable_ustl']
-print 'Disable IPv6:     ', env['disable_ipv6']
-print 'Disable libtecla: ', env['disable_libtecla']
-print 'Disable Firewall: ', env['disable_fw']
-print 'Disable Profile : ', env['disable_profile']
-print 'Disable -Werror : ', env['disable_werror']
-print 'Disable deprecated warnings: ', env['disable_wdeprecated']
-print 'Enable lex hack : ', env['enable_lex_hack']
-print 'Disable warning logs : ', env['disable_warninglogs']
-print 'Disable error logs : ', env['disable_errorlogs']
-print 'Disable trace logs : ', env['disable_tracelogs']
-print 'Disable fatal logs : ', env['disable_fatallogs']
-print 'Disable info logs : ', env['disable_infologs']
-print 'Disable assert logs : ', env['disable_assertlogs']
-print 'Disable other logs : ', env['disable_otherlogs']
-print 'Disable assert: ', env['disable_assert']
+print('Debug symbols:    ', env['debug'])
+print('Debug STL:        ', env['debug_stl'])
+print('Debug messages:   ', env['debug_msg'])
+print('Debug function names: ', env['debug_fn'])
+print('Debug callbacks:  ', env['debug_cb'])
+print('Debug XRL syntax: ', env['debug_xrldb'])
+print('Enable OLSR:      ', env['enable_olsr'])
+print('Enable Wrapper:   ', env['enable_wrapper'])
+print('Enable OSPF:      ', env['enable_ospf'])
+print('Enable RIP:       ', env['enable_rip'])
+print('Enable VRRP:      ', env['enable_vrrp'])
+print('Enable xorpsh     ', env['enable_xorpsh'])
+print('Enable Test Programs: ', env['enable_tests'])
+print('Enable CLICK:     ', env['enable_click'])
+print('Enable FEA Dummy: ', env['enable_fea_dummy'])
+print('Enable VIFF_USE_IFINDEX: ', env['enable_viff_use_ifindex'])
+print('Enable async method impls: ', env['enable_async_server'])
+print('Enable BGP:       ', env['enable_bgp'])
+print('Enable BuildInfo: ', env['enable_buildinfo'])
+print('Xorp can run from BUILD_DIR: ', env['enable_builddirrun'])
+print('Try Enable BOOST: ', env['enable_boost'])
+print('Try Enable uSTL : ', env['enable_ustl'])
+print('Disable IPv6:     ', env['disable_ipv6'])
+print('Disable libtecla: ', env['disable_libtecla'])
+print('Disable Firewall: ', env['disable_fw'])
+print('Disable Profile : ', env['disable_profile'])
+print('Disable -Werror : ', env['disable_werror'])
+print('Disable deprecated warnings: ', env['disable_wdeprecated'])
+print('Enable lex hack : ', env['enable_lex_hack'])
+print('Disable warning logs : ', env['disable_warninglogs'])
+print('Disable error logs : ', env['disable_errorlogs'])
+print('Disable trace logs : ', env['disable_tracelogs'])
+print('Disable fatal logs : ', env['disable_fatallogs'])
+print('Disable info logs : ', env['disable_infologs'])
+print('Disable assert logs : ', env['disable_assertlogs'])
+print('Disable other logs : ', env['disable_otherlogs'])
+print('Disable assert: ', env['disable_assert'])
 
 
 env['CONFIGURELOG'] = str(builddir) + os.sep + 'config.log'
@@ -328,47 +327,47 @@ def Symlink(src, link_name):
 SConsEnvironment.Symlink = SCons.Action.ActionFactory(Symlink,
     lambda src, link_name: 'Symlink("%s", as "%s")' % (src, link_name))
 
-def InstallProgram(env, dest, files, perm = 0755):
+def InstallProgram(env, dest, files, perm = 0o755):
     if env.has_key('DESTDIR'):
-    	# NB: use simple concatenation
-    	dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
+        # NB: use simple concatenation
+        dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
     obj = env.Install(dest, files)
     for i in obj:
-	env.AddPostAction(i, env.Chmod(str(i), perm))
-	if env['strip']:
-	    env.AddPostAction(i, Action("$STRIP $TARGET"))
+        env.AddPostAction(i, env.Chmod(str(i), perm))
+        if env['strip']:
+            env.AddPostAction(i, Action("$STRIP $TARGET"))
     return obj
 SConsEnvironment.InstallProgram = InstallProgram
 
-def InstallScript(env, dest, files, perm = 0555):
+def InstallScript(env, dest, files, perm = 0o555):
     if env.has_key('DESTDIR'):
-    	# NB: use simple concatenation
-    	dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
+        # NB: use simple concatenation
+        dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
     obj = env.Install(dest, files)
     for i in obj:
-	env.AddPostAction(i, env.Chmod(str(i), perm))
+        env.AddPostAction(i, env.Chmod(str(i), perm))
     return obj
 SConsEnvironment.InstallScript = InstallScript
 
-def InstallLibrary(env, dest, files, perm = 0644):
+def InstallLibrary(env, dest, files, perm = 0o644):
     if env.has_key('DESTDIR'):
-    	# NB: use simple concatenation
-    	dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
+        # NB: use simple concatenation
+        dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
     obj = env.Install(dest, files)
     for i in obj:
-	env.AddPostAction(i, env.Chmod(str(i), perm))
-	if env['strip']:
-	    env.AddPostAction(i, Action("$STRIP $_STRIP_UNNEEDED $TARGET"))
+        env.AddPostAction(i, env.Chmod(str(i), perm))
+        if env['strip']:
+            env.AddPostAction(i, Action("$STRIP $_STRIP_UNNEEDED $TARGET"))
     return obj
 SConsEnvironment.InstallLibrary = InstallLibrary
 
-def InstallData(env, dest, files, perm = 0644):
+def InstallData(env, dest, files, perm = 0o644):
     if env.has_key('DESTDIR'):
-    	# NB: use simple concatenation
-    	dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
+        # NB: use simple concatenation
+        dest = env.Dir(env['DESTDIR'] + env.Dir(dest).path)
     obj = env.Install(dest, files)
     for i in obj:
-	env.AddPostAction(i, env.Chmod(str(i), perm))
+        env.AddPostAction(i, env.Chmod(str(i), perm))
     return obj
 SConsEnvironment.InstallData = InstallData
 
@@ -400,15 +399,15 @@ env['mandir'] = ARGUMENTS.get('mandir', '$datarootdir/man')
 # The image layout is intended to be FHS 2.3 compliant, for the benefit
 # of 3rd party packagers and distributors.
 #
-env['xorp_rootdir']     = env['exec_prefix']	# used to determine RPATH
-env['xorp_confdir']     = env['sysconfdir']		# path to xorp.conf
+env['xorp_rootdir']     = env['exec_prefix']    # used to determine RPATH
+env['xorp_confdir']     = env['sysconfdir']             # path to xorp.conf
 env['xorp_libdir']      = env['libdir']  + '/xorp/lib'
-env['xorp_moduledir']   = env['libdir']  + '/xorp/sbin'	# Protocol modules
-env['xorp_sbindir']     = env['sbindir']		# End-user binaries
+env['xorp_moduledir']   = env['libdir']  + '/xorp/sbin' # Protocol modules
+env['xorp_sbindir']     = env['sbindir']                # End-user binaries
 env['xorp_templatedir'] = env['datadir'] + '/templates'
-env['xorp_tooldir']     = env['libdir']  + '/xorp/bin'	# tools/*
-env['xorp_xrlsdir']     = env['datadir'] + '/xrl/targets'	# *.xrls
-env['xorp_sourcedir']   = sourcedir	# rtrmgr/util.cc and xif need this
+env['xorp_tooldir']     = env['libdir']  + '/xorp/bin'  # tools/*
+env['xorp_xrlsdir']     = env['datadir'] + '/xrl/targets'       # *.xrls
+env['xorp_sourcedir']   = sourcedir     # rtrmgr/util.cc and xif need this
 
 tst = ARGUMENTS.get('enable_builddirrun', False)
 if tst and not ((tst == "no") or (tst == "false")):
@@ -480,8 +479,8 @@ else:
         if not env.GetOption('clean') and \
                not env.GetOption('help'):
             if os.system("./libxorp/create_buildinfo.sh") != 0:
-                print "ERROR:  Failed to generate libxorp/build_info.cc."
-                print "You can disable this feature with: enable_buildinfo=no"
+                print("ERROR:  Failed to generate libxorp/build_info.cc.")
+                print("You can disable this feature with: enable_buildinfo=no")
                 exit(1)
 
 if env.GetOption('clean'):
@@ -651,16 +650,16 @@ if not env.GetOption('clean') and \
     from config.boost import CheckBoost, CheckBoostLibrary
 
     my_custom_tests = {
-	'CheckBoost'        : CheckBoost,
-	'CheckBoostLibrary' : CheckBoostLibrary,
-	'CheckEndianness'   : CheckEndianness,
-	'CheckTypeMember'   : CheckTypeMember,
-	'CheckSysctl'       : CheckSysctl
+        'CheckBoost'        : CheckBoost,
+        'CheckBoostLibrary' : CheckBoostLibrary,
+        'CheckEndianness'   : CheckEndianness,
+        'CheckTypeMember'   : CheckTypeMember,
+        'CheckSysctl'       : CheckSysctl
     }
 
     conf = env.Configure(config_h = str(builddir) + '/xorp_config.h',
-			 log_file = str(builddir) + '/config.log',
-			 custom_tests = my_custom_tests)
+                         log_file = str(builddir) + '/config.log',
+                         custom_tests = my_custom_tests)
 
     ##########
     # target os
@@ -682,14 +681,14 @@ if not env.GetOption('clean') and \
         conf.Define('HAVE_PROC_LINUX')
         conf.Define('ENABLE_ADVANCED_MULTICAST_API')
     elif fnmatch.fnmatch(host_os, 'netbsd*'):
-	osname = "NetBSD"
-	conf.Define('HOST_OS_NETBSD')
+        osname = "NetBSD"
+        conf.Define('HOST_OS_NETBSD')
         conf.Define('ENABLE_ADVANCED_MULTICAST_API')
     elif fnmatch.fnmatch(host_os, 'sunos*'):
         osname = "Solaris"
         conf.Define('HOST_OS_SOLARIS')
     else:
-	osname = sys.platform.upper()
+        osname = sys.platform.upper()
     conf.Define('HOST_OS_NAME', '"' + osname + '"')
 
     #export osname - needed for lex and yacc
@@ -710,9 +709,9 @@ if not env.GetOption('clean') and \
 
     if env['enable_boost']:
         # Boost
-        #env['boost_suffix'] = "-mt"		# Not for FreeBSD
+        #env['boost_suffix'] = "-mt"            # Not for FreeBSD
         if  not conf.CheckBoost(require_version='1.34'):
-            print "Boost version check for 1.34 failed, disabling boost support.\n"
+            print("Boost version check for 1.34 failed, disabling boost support.\n")
             env['enable_boost'] = False
 
         #conf.CheckBoostLibrary('system')
@@ -762,13 +761,13 @@ if not env.GetOption('clean') and \
 
     # Print warnings about missing/skipped dependencies.
     if env['MISSING_DEPS']:
-        print '\nRequired dependencies not found, exiting:\n   - %s' % '\n   - '.join(env['MISSING_DEPS'])
+        print('\nRequired dependencies not found, exiting:\n   - %s' % '\n   - '.join(env['MISSING_DEPS']))
         if env['SKIPPED_DEPS']:
-            print 'Optional dependencies not found:\n   - %s' % '\n   - '.join(env['SKIPPED_DEPS'])
+            print('Optional dependencies not found:\n   - %s' % '\n   - '.join(env['SKIPPED_DEPS']))
         Exit(1)
 
     if env['SKIPPED_DEPS']:
-        print 'Optional dependencies not found:\n   - %s' % '\n   - '.join(env['SKIPPED_DEPS'])
+        print('Optional dependencies not found:\n   - %s' % '\n   - '.join(env['SKIPPED_DEPS']))
 
     newenv = conf.Finish()
     #
@@ -786,25 +785,25 @@ if not env.GetOption('clean') and \
     post_LIBS = env['LIBS']
     env['LIBS'] = pre_LIBS
 
-    print 'Detected libraries:',
+    print('Detected libraries:')
     for x in post_LIBS:
-        print x,
-    print
+        print(x)
+    print()
 
 ########## end configure magic
 
 if SCons.Tool.FindTool(['gcc'], env) is None or \
    SCons.Tool.FindTool(['g++'], env) is None:
-    print gnutoolwarning % 'gcc or g++ compiler'
+    print(gnutoolwarning % 'gcc or g++ compiler')
 
 # If the user didn't override our default optimization, then
 # sanitize user's CFLAGS/CXXFLAGS to not contain optimization options,
 # and map to an appropriate GCC flag.
 if not env['optimize'] == 'override':
-    env.Replace( CFLAGS = filter(lambda s: not s.startswith('-O'),
-                                 Split(env['CFLAGS'])))
-    env.Replace( CXXFLAGS = filter(lambda s: not s.startswith('-O'),
-                                   Split(env['CXXFLAGS'])))
+    env.Replace( CFLAGS = list(filter(lambda s: not s.startswith('-O'),
+                                 Split(env['CFLAGS']))))
+    env.Replace( CXXFLAGS = list(filter(lambda s: not s.startswith('-O'),
+                                   Split(env['CXXFLAGS']))))
     bigodict = { 'no': '-O0',
                  # 'minimal' denotes only those optimizations
                  # necessary to force gcc to perform the tree_sink
@@ -832,10 +831,10 @@ if not env['optimize'] == 'override':
 
 # Do the same for the flags which control debug symbols.
 if not env['debug'] == 'override':
-    env.Replace( CFLAGS = filter(lambda s: not s.startswith('-g'),
-                                 Split(env['CFLAGS'])))
-    env.Replace( CXXFLAGS = filter(lambda s: not s.startswith('-g'),
-                                   Split(env['CXXFLAGS'])))
+    env.Replace( CFLAGS = list(filter(lambda s: not s.startswith('-g'),
+                                 Split(env['CFLAGS']))))
+    env.Replace( CXXFLAGS = list(filter(lambda s: not s.startswith('-g'),
+                                   Split(env['CXXFLAGS']))))
     gdict = { 'no': '', 'yes': '-g', 'full': '-g3' }
     gflag = gdict[env['debug']]
     if not env['debug'] == 'no':
@@ -845,27 +844,27 @@ if not env['debug'] == 'override':
 # Do the same for the flags which control code profiling.
 if not env['profile'] == 'override':
     if env['profile'] == 'gprof' and env.has_key('SHAREDLIBS'):
-        print """
+        print("""
 WARNING: You have requested GNU gprof style profiling
 and shared libraries. This is UNSUPPORTED, and probably will not link.
-"""
+""")
     strip_pg_flags = [ '-pg', '-finstrument-functions', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls' ]
     try:
-        env.Replace( CFLAGS = filter(
+        env.Replace( CFLAGS = list(filter(
             lambda s: not s.startswith(tuple(strip_pg_flags)),
-            Split(env['CFLAGS']))
+            Split(env['CFLAGS'])))
         )
-        env.Replace( CXXFLAGS = filter(
+        env.Replace( CXXFLAGS = list(filter(
             lambda s: not s.startswith(tuple(strip_pg_flags)),
-            Split(env['CXXFLAGS']))
+            Split(env['CXXFLAGS'])))
         )
     except TypeError:
-        print """
+        print("""
         WARNING: Your version of scons and/or python has a syntax issue with this code.
         It cannot strip out the gprof related flags.  If your compile fails, please try
         disabling gprof profiling and/or shared libraries.  If the compile works, then
         you can ignore this warning.
-        """
+        """)
 
     # Full use of profiling may require more than one flag, so Split() them.
     pgdict = {'no': '',
@@ -937,7 +936,7 @@ if env['enable_boost']:
         ])
 
 if env['disable_wdeprecated']:
-    print "WARNING:  Adding -Wno-deprecated on user command."
+    print("WARNING:  Adding -Wno-deprecated on user command.")
     env.AppendUnique(CFLAGS = [
         '-Wno-deprecated',
         ])
@@ -952,16 +951,16 @@ if ((build != "i386-pc-mingw32") and
      host_cpu == "i386" or
      host_cpu == "x86_64")):
     if env['disable_werror']:
-	print "WARNING:  Disabling -Werror on user command."
+        print("WARNING:  Disabling -Werror on user command.")
     else:
         env.AppendUnique(CFLAGS = [
-	        '-Werror',
-		])
-	env.AppendUnique(CXXFLAGS = [
-		'-Werror',
-		])
+                '-Werror',
+                ])
+        env.AppendUnique(CXXFLAGS = [
+                '-Werror',
+                ])
 else:
-    print "WARNING:  Detected funky platform, will not enable -Werror compile option: ", host_cpu
+    print("WARNING:  Detected funky platform, will not enable -Werror compile option: ", host_cpu)
 
 
 # NOTE: gcc specific flags.
@@ -1065,63 +1064,63 @@ env['xorp_module_rpath'] = env['xorp_libdir']
 
 if env.has_key('SHAREDLIBS'):
     if env['rtld_origin']:
-	#
-	# Build a subdirectory for holding symlinks to libraries upfront, so
-	# that binaries about to be built can be run from inside the BUILDDIR.
-	#
-	# XXX Assumes that $libdir is below $exec_prefix. If the
-	# user changes this, results are undefined.
-	#
-	# $BUILDIR/lib will contain .so symlinks
-	#
-	xorp_alias_libdir = os.path.join(builddir, 'lib')
-	# XXX workaround Mkdir() failure on EEXIST, SCons < 20090223.
-	try:
-		Execute(Mkdir(xorp_alias_libdir))
-	except:
-		pass
-	env['xorp_alias_libdir'] = xorp_alias_libdir
-	#
-	# Build a further alias for the benefit of entities which
-	# will be later installed in $xorp_sbindir.
-	#
-	# $BUILDIR/lib/xorp/lib will point to $BUILDIR/lib
-	#
-	xorp_alias_subdir = os.path.join(xorp_alias_libdir, 'xorp')
-	#
-	# XXX workaround Mkdir() failure on EEXIST, SCons < 20090223.
-	xorp_module_alias_libdir = os.path.join(xorp_alias_subdir, 'lib')
-	try:
-		Execute(Mkdir(xorp_alias_subdir))
-	except:
-		pass
-	Execute(env.Symlink(xorp_alias_libdir, xorp_module_alias_libdir))
-	env['xorp_module_alias_libdir'] = xorp_module_alias_libdir
+        #
+        # Build a subdirectory for holding symlinks to libraries upfront, so
+        # that binaries about to be built can be run from inside the BUILDDIR.
+        #
+        # XXX Assumes that $libdir is below $exec_prefix. If the
+        # user changes this, results are undefined.
+        #
+        # $BUILDIR/lib will contain .so symlinks
+        #
+        xorp_alias_libdir = os.path.join(builddir, 'lib')
+        # XXX workaround Mkdir() failure on EEXIST, SCons < 20090223.
+        try:
+                Execute(Mkdir(xorp_alias_libdir))
+        except:
+                pass
+        env['xorp_alias_libdir'] = xorp_alias_libdir
+        #
+        # Build a further alias for the benefit of entities which
+        # will be later installed in $xorp_sbindir.
+        #
+        # $BUILDIR/lib/xorp/lib will point to $BUILDIR/lib
+        #
+        xorp_alias_subdir = os.path.join(xorp_alias_libdir, 'xorp')
+        #
+        # XXX workaround Mkdir() failure on EEXIST, SCons < 20090223.
+        xorp_module_alias_libdir = os.path.join(xorp_alias_subdir, 'lib')
+        try:
+                Execute(Mkdir(xorp_alias_subdir))
+        except:
+                pass
+        Execute(env.Symlink(xorp_alias_libdir, xorp_module_alias_libdir))
+        env['xorp_module_alias_libdir'] = xorp_module_alias_libdir
 
         if not fnmatch.fnmatch(host_os, 'mingw32*'):
             # Tell rtld to turn on $ORIGIN processing by default.
             # NOTE: GNU ld specific flag.
             env.PrependUnique( LINKFLAGS = [ '-Wl,-z,origin' ] )
 
-	# Set relative RPATH for each kind of installed XORP component.
-	env['xorp_sbin_rpath'] = os.path.join('\\$$ORIGIN',
-	   os.path.relpath(env.Dir('$xorp_libdir').abspath,
-			   env.Dir('$xorp_sbindir').abspath))
-	env['xorp_tool_rpath'] = os.path.join('\\$$ORIGIN',
-	   os.path.relpath(env.Dir('$xorp_libdir').abspath,
-			   env.Dir('$xorp_tooldir').abspath))
-	env['xorp_module_rpath'] = os.path.join('\\$$ORIGIN',
-	   os.path.relpath(env.Dir('$xorp_libdir').abspath,
-			   env.Dir('$xorp_moduledir').abspath))
+        # Set relative RPATH for each kind of installed XORP component.
+        env['xorp_sbin_rpath'] = os.path.join('\\$$ORIGIN',
+           os.path.relpath(env.Dir('$xorp_libdir').abspath,
+                           env.Dir('$xorp_sbindir').abspath))
+        env['xorp_tool_rpath'] = os.path.join('\\$$ORIGIN',
+           os.path.relpath(env.Dir('$xorp_libdir').abspath,
+                           env.Dir('$xorp_tooldir').abspath))
+        env['xorp_module_rpath'] = os.path.join('\\$$ORIGIN',
+           os.path.relpath(env.Dir('$xorp_libdir').abspath,
+                           env.Dir('$xorp_moduledir').abspath))
 
 if env['enable_builddirrun']:
-	#
-	# Build a subdirectories for holding symlinks to modules and command binaries,
-	# so that xorpsh and rtrmngr, about to be built, can be run from inside the BUILDDIR.
-	#
-	# $BUILDIR/lib/bin will contain symlinks to command bins
-	# $BUILDIR/lib/sbin will contain symlinks to module bins
-	#
+        #
+        # Build a subdirectories for holding symlinks to modules and command binaries,
+        # so that xorpsh and rtrmngr, about to be built, can be run from inside the BUILDDIR.
+        #
+        # $BUILDIR/lib/bin will contain symlinks to command bins
+        # $BUILDIR/lib/sbin will contain symlinks to module bins
+        #
     xorp_alias_subdir = os.path.join(builddir, 'lib')
     xorp_alias_subdir = os.path.join(xorp_alias_subdir, 'xorp')
     xorp_alias_moduledir = os.path.join(xorp_alias_subdir, 'sbin')

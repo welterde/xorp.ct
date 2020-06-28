@@ -169,7 +169,7 @@ if not is_shared:
             ])
 
 util_cc_env = env.Clone()
-util_cc_env.AppendUnique(CPPDEFINES=xorp_paths.items())
+util_cc_env.AppendUnique(CPPDEFINES=list(xorp_paths.items()))
 obj_util = util_cc_env.StaticObject(source='util.cc')
 libxorp_rtrmgr_srcs += [ obj_util ]
 
