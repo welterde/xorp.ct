@@ -5,8 +5,8 @@ from time import time, localtime, strftime
 # Utility methods and structures
 
 def warn(file, lineno, reason):
-    print "In Xrl starting at line %d in %s:" % (lineno, file)
-    print "\t", reason
+    print("In Xrl starting at line %d in %s:" % (lineno, file))
+    print("\t", reason)
 
 def quit(file, lineno, reason):
     warn(file, lineno, reason)
@@ -31,7 +31,7 @@ def xorp_indent(level):
     if level <= 0:
         return ""
     s = ""
-    ntabs = level / 2
+    ntabs = int(level / 2)
     for i in range(0, ntabs):
         s += "\t"
 
@@ -76,10 +76,10 @@ def proper(n):
     l = ' '
     r = ""
     for i in range(0, len(n)):
-        if string.find(string.whitespace, l) >= 0:
-            r += string.upper(n[i])
+        if string.whitespace.find(l) >= 0:
+            r += n[i].upper()
         else:
-            r += string.lower(n[i])
+            r += n[i].lower()
         l = n[i]
     return r
 
@@ -92,14 +92,14 @@ def caps_cpp_classname(s):
     apply_cap = 1
     r = ""
     for l in s:
-        digit = (string.find(string.digits, l) >= 0);
+        digit = (string.digits.find(l) >= 0);
         if (digit):
             apply_cap = 1
-        elif (string.find(string.letters, l) < 0):
+        elif (string.ascii_letters.find(l) < 0):
             apply_cap = 1
             l = ''
         elif (apply_cap):
-            l = string.upper(l)
+            l = l.upper()
             apply_cap = 0
         r += l
     return r
