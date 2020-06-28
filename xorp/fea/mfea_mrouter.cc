@@ -47,9 +47,12 @@
 #ifdef HAVE_LINUX_TYPES_H
 #include <linux/types.h>
 #endif
-#ifdef HAVE_SYS_SYSCTL_H
+#ifdef HAVE_LINUX_SYSCTL_H
+#include <linux/sysctl.h>
+#elif HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
+
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif

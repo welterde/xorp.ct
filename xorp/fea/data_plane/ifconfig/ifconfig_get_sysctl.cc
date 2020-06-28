@@ -25,7 +25,10 @@
 #include "libxorp/xlog.h"
 #include "libxorp/debug.h"
 
-#ifdef HAVE_SYS_SYSCTL_H
+
+#ifdef HAVE_LINUX_SYSCTL_H
+#include <linux/sysctl.h>
+#elif HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
 #ifdef HAVE_NET_IF_H

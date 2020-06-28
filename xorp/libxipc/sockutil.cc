@@ -54,9 +54,6 @@
 #ifdef HAVE_SYS_SOCKIO_H
 #include <sys/sockio.h>
 #endif
-#ifdef HAVE_SYS_SYSCTL_H
-#include <sys/sysctl.h>
-#endif
 
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>

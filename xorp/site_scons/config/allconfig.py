@@ -206,6 +206,7 @@ def DoAllConfig(env, conf, host_os):
     # bsd
     has_sys_linker_h = conf.CheckHeader(['sys/param.h', 'sys/linker.h'])
     has_sys_sysctl_h = conf.CheckHeader(['sys/param.h', 'sys/sysctl.h'])
+    has_linux_sysctl_h = conf.CheckHeader(['sys/param.h', 'linux/sysctl.h'])
     
     # linux
     has_linux_types_h = conf.CheckHeader('linux/types.h')
