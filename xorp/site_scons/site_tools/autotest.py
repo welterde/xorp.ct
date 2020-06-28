@@ -47,7 +47,7 @@ def multiget(dictlist, key, default = None):
     dictionaries, the default is returned.
     """
     for dict in dictlist:
-        if dict.has_key(key):
+        if key in dict:
             return dict[key]
     else:
         return default

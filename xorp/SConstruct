@@ -122,7 +122,7 @@ vars.AddVariables(
 
 def log_args(afname):
     with open(afname, 'w') as f:
-        for k,v in ARGUMENTS:
+        for k,v in ARGUMENTS.items():
             f.write('%s=%s\n' % (k,v))
         f.write('\n')
 
@@ -800,10 +800,10 @@ if SCons.Tool.FindTool(['gcc'], env) is None or \
 # sanitize user's CFLAGS/CXXFLAGS to not contain optimization options,
 # and map to an appropriate GCC flag.
 if not env['optimize'] == 'override':
-    env.Replace( CFLAGS = filter(lambda s: not s.startswith('-O'),
-                                 Split(env['CFLAGS'])))
-    env.Replace( CXXFLAGS = filter(lambda s: not s.startswith('-O'),
-                                   Split(env['CXXFLAGS'])))
+    env.Replace( CFLAGS = list(filter(lambda s: not s.startswith('-O'),
+                                 Split(env['CFLAGS']))))
+    env.Replace( CXXFLAGS = list(filter(lambda s: not s.startswith('-O'),
+                                   Split(env['CXXFLAGS']))))
     bigodict = { 'no': '-O0',
                  # 'minimal' denotes only those optimizations
                  # necessary to force gcc to perform the tree_sink
@@ -831,10 +831,10 @@ if not env['optimize'] == 'override':
 
 # Do the same for the flags which control debug symbols.
 if not env['debug'] == 'override':
-    env.Replace( CFLAGS = filter(lambda s: not s.startswith('-g'),
-                                 Split(env['CFLAGS'])))
-    env.Replace( CXXFLAGS = filter(lambda s: not s.startswith('-g'),
-                                   Split(env['CXXFLAGS'])))
+    env.Replace( CFLAGS = list(filter(lambda s: not s.startswith('-g'),
+                                 Split(env['CFLAGS']))))
+    env.Replace( CXXFLAGS = list(filter(lambda s: not s.startswith('-g'),
+                                   Split(env['CXXFLAGS']))))
     gdict = { 'no': '', 'yes': '-g', 'full': '-g3' }
     gflag = gdict[env['debug']]
     if not env['debug'] == 'no':
@@ -850,13 +850,13 @@ and shared libraries. This is UNSUPPORTED, and probably will not link.
 """)
     strip_pg_flags = [ '-pg', '-finstrument-functions', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls' ]
     try:
-        env.Replace( CFLAGS = filter(
+        env.Replace( CFLAGS = list(filter(
             lambda s: not s.startswith(tuple(strip_pg_flags)),
-            Split(env['CFLAGS']))
+            Split(env['CFLAGS'])))
         )
-        env.Replace( CXXFLAGS = filter(
+        env.Replace( CXXFLAGS = list(filter(
             lambda s: not s.startswith(tuple(strip_pg_flags)),
-            Split(env['CXXFLAGS']))
+            Split(env['CXXFLAGS'])))
         )
     except TypeError:
         print("""
