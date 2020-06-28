@@ -111,7 +111,7 @@ def _Have(context, key, have, comment = None):
              Give "have" as is should appear in the header file, include quotes
              when desired and escape special characters!
     """
-    key_up = string.upper(key)
+    key_up = key.upper()
     key_up = re.sub('[^A-Z0-9_]', '_', key_up)
     context.havedict[key_up] = have
     if have == 1:
